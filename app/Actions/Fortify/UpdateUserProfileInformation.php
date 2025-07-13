@@ -19,6 +19,14 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
      */
     public function update(User $user, array $input): void
     {
+        Validator::make($input, [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'photo' => ['nullable', 'mimes:jpg,jpeg,png', 'max:5120'],
+        ], [
+            'photo.max' => 'The profile photo must not be larger than 5MB.',
+        ])->validateWithBag('updateProfileInformation');
+
         if (isset($input['photo'])) {
             $processedImage = $input['photo'] = Image::read($input['photo'])
                 ->scale(250, 250)
@@ -35,12 +43,6 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 true
             );
         }
-
-        Validator::make($input, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'photo' => ['nullable', 'mimes:jpg,jpeg,png', 'max:1024'],
-        ])->validateWithBag('updateProfileInformation');
 
         if (isset($input['photo'])) {
             $user->updateProfilePhoto($input['photo']);
