@@ -14,8 +14,10 @@ class PostController extends Controller
      */
     public function index()
     {
+        $posts = Post::query()->paginate();
+
         return Inertia::render('Posts/Index', [
-            'posts' => PostResource::collection(Post::all()),
+            'posts' => PostResource::collection($posts),
         ]);
     }
 
