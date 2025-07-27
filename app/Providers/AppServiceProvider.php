@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Http\Resources\PostResource;
+use App\Providers\TestServiceProvider;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,5 +25,9 @@ class AppServiceProvider extends ServiceProvider
         PostResource::withoutWrapping();
 
         Model::preventLazyLoading();
+
+        if ($this->app->environment('testing')) {
+            $this->app->register(TestServiceProvider::class);
+        }
     }
 }
