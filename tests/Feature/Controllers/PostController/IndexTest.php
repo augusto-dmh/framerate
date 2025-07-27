@@ -15,11 +15,9 @@ it('should return the correct component', function () {
 });
 
 it('passes posts to the view', function () {
-    $posts = Post::factory(3)->create();
+    $posts = Post::factory(3)->create()->reverse();
 
     get(route('posts.index'))
-        ->assertInertia(fn (AssertableInertia $inertia) => $inertia
-            ->hasCollection('posts', $posts)
-            ->hasResource('posts', PostResource::make($posts->first()))
-        );
+        ->assertHasPaginatedResource('posts', PostResource::collection($posts))
+        ->assertInertia(fn (AssertableInertia $inertia) => $inertia);
 });
