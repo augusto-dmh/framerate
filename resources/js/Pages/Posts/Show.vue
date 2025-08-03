@@ -13,7 +13,7 @@
                     </li>
                 </ul>
 
-                <Pagination :meta="comments.meta" :preserveScroll="true"/>
+                <Pagination :meta="comments.meta" :preserveScroll="true" :only="['comments']" />
             </div>
         </Container>
     </AppLayout>
