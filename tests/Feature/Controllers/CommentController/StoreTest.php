@@ -5,9 +5,15 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\post;
 use function Pest\Laravel\withExceptionHandling;
 
 use App\Models\Comment;
+
+it('requires authentication', function () {
+    post(route('posts.comments.store', Post::factory()->create()), ['body' => 'some body'])
+        ->assertRedirect(route('login'));
+});
 
 it('can store a post', function () {
     $user = User::factory()->create(); /** @var \App\Models\User $user */

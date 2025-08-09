@@ -8,7 +8,7 @@
             <div class="mt-12 mt-4">
                 <h2 class="text-xl font-semibold">Comments</h2>
 
-                <form @submit.prevent="addComment">
+                <form v-if="$page.props.auth.user" @submit.prevent="addComment">
                     <div>
                         <InputLabel for="body" class="sr-only">Comment</InputLabel>
                         <TextArea id="body" v-model="commentForm.body" />
