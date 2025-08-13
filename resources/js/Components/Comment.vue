@@ -13,8 +13,6 @@ import { router, usePage } from '@inertiajs/vue3';
         router.delete(route('comments.destroy', props.comment.id), {
             preserveScroll: true,
         });
-
-    const canDelete = computed(() => props.comment.user.id === usePage().props.auth.user?.id);
 </script>
 
 <template>
@@ -24,7 +22,7 @@ import { router, usePage } from '@inertiajs/vue3';
             <p class="mt-1 break-all" v-html="preventWidow(comment.body)"></p>
             <span class="pt-1 text-xs text-gray-600 block">By {{ comment.user.name }} {{ formattedDate(comment.created_at) }} ago</span>
             <div class="mt-1">
-                <form v-if="canDelete" @submit.prevent="deleteComment">
+                <form v-if="comment.can.delete" @submit.prevent="deleteComment">
                     <button>Delete</button>
                 </form>
             </div>
