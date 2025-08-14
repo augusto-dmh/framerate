@@ -7,6 +7,7 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Inertia\Inertia;
 
 class CommentController extends Controller
 {
@@ -78,6 +79,6 @@ class CommentController extends Controller
 
         $comment->delete();
 
-        return to_route('posts.show', $comment->post_id);
+        return to_route('posts.show', [ 'post' => $comment->post_id, 'page' => $request->query('page'), ]);
     }
 }

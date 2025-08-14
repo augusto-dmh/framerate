@@ -9,21 +9,22 @@ import { router, usePage } from '@inertiajs/vue3';
 
     const preventWidow = (text) => text.replace(/\s(?=[^\s]*$)/, '&nbsp;');
 
-    const deleteComment = () =>
-        router.delete(route('comments.destroy', props.comment.id), {
-            preserveScroll: true,
-        });
+    const emit = defineEmits(['delete']);
 </script>
 
 <template>
-    <div class="flex items-center gap-4">
-        <img :src="comment.user.profile_photo_url" :alt="comment.user.name" class="rounded-ful w-12 h-12" />
-        <div class="flex gap-2 flex-col">
+    <div class="sm:flex w-full">
+        <div class="mb-4 flex-shrink-0 sm:mb-0 sm:mr-4">
+            <img :src="comment.user.profile_photo_url" :alt="comment.user.name" class="h-10 w-10 rounded-full" />
+        </div>
+        <div class="flex-1 flex flex-col">
             <p class="mt-1 break-all" v-html="preventWidow(comment.body)"></p>
-            <span class="pt-1 text-xs text-gray-600 block">By {{ comment.user.name }} {{ formattedDate(comment.created_at) }} ago</span>
-            <div class="mt-1">
-                <form v-if="comment.can.delete" @submit.prevent="deleteComment">
-                    <button>Delete</button>
+            <span class="first-letter:uppercase block pt-1 text-xs text-gray-600">
+                By {{ comment.user.name }} {{ formattedDate(comment.created_at) }} ago
+            </span>
+            <div class="mt-1 flex justify-end">
+                <form v-if="comment.can?.delete" @submit.prevent="$emit('delete', comment.id)">
+                    <button class="font-mono text-red-700 text-xs">Delete</button>
                 </form>
             </div>
         </div>
