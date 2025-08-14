@@ -43,7 +43,7 @@
           class="isolate bg-white inline-flex -space-x-px rounded-md shadow-xs"
           aria-label="Pagination"
         >
-            <template v-for="link in meta.links" :key="link.url">
+            <template v-for="(link, i) in meta.links" :key="`${link.url}-${i}`">
                 <Link
                     v-if="link.url"
                     :href="link.url"
