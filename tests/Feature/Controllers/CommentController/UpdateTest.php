@@ -47,3 +47,17 @@ it('cannot update a comment from another user', function () {
     actingAs($nonAuthor)->put(route('comments.update', $comment))
         ->assertForbidden();
 });
+
+it('requires a valid body', function ($invalidBody) {
+    $comment = Comment::factory()->create();
+
+    actingAs($comment->user)
+        ->put(route('comments.update', $comment), ['body' => $invalidBody])
+        ->assertInvalid('body');
+})->with([
+    null,
+    true,
+    1,
+    1.5,
+    str_repeat('a', 2501),
+]);
