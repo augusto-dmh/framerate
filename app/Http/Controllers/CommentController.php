@@ -7,26 +7,13 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Inertia\Inertia;
 
 class CommentController extends Controller
 {
     use AuthorizesRequests;
 
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+    public function __construct() {
+        $this->authorizeResource(Comment::class);
     }
 
     /**
@@ -47,32 +34,13 @@ class CommentController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(Comment $comment)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Comment $comment)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, Comment $comment)
     {
-        $this->authorize('update', $comment);
+        $data = $request->validate(['body' => ['required', 'string', 'max:2500']]);
 
-        if ($request->input('body')) {
-            $comment->body = $request->input('body');
-            $comment->save();
-        }
+        $comment->update($data);
 
         return to_route('posts.show', ['post' => $comment->post_id, 'page' => $request->query('page')]);
     }
@@ -82,8 +50,6 @@ class CommentController extends Controller
      */
     public function destroy(Request $request, Comment $comment)
     {
-        $this->authorize('delete', $comment);
-
         $comment->delete();
 
         return to_route('posts.show', [ 'post' => $comment->post_id, 'page' => $request->query('page'), ]);
