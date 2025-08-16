@@ -67,7 +67,14 @@ class CommentController extends Controller
      */
     public function update(Request $request, Comment $comment)
     {
-        //
+        $this->authorize('update', $comment);
+
+        if ($request->input('body')) {
+            $comment->body = $request->input('body');
+            $comment->save();
+        }
+
+        return to_route('posts.show', ['post' => $comment->post_id, 'page' => $request->query('page')]);
     }
 
     /**
