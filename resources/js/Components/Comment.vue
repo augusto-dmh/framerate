@@ -4,14 +4,15 @@ import { formatDate } from './Utilities/date';
 import { router, usePage } from '@inertiajs/vue3';
 import TextArea from '@/Components/TextArea.vue';
 import { debounce } from './Utilities/debounce';
+import { TrashIcon, CheckIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 
     const props = defineProps({
         comment: Object,
         isBeingEdited: Boolean,
+        isMarkedForDeletion: Boolean,
     });
 
-    const emit = defineEmits(['delete', 'edit', 'saveEdit', 'cancelEdit', 'updatePreview']);
-
+    const emit = defineEmits(['markForDeletion', 'confirmDelete', 'cancelDelete', 'edit', 'saveEdit', 'cancelEdit', 'updatePreview']);
     const debouncedUpdate = debounce((value) => {
         emit('updatePreview', value);
     }, 300);
@@ -57,9 +58,20 @@ import { debounce } from './Utilities/debounce';
                     <button class="font-mono text-gray-600 text-xs" @click.prevent="$emit('cancelEdit')">Cancel</button>
                 </div>
 
-                <form v-if="comment.can?.delete" @submit.prevent="$emit('delete', comment.id)">
-                    <button class="font-mono text-red-700 text-xs">Delete</button>
+                <form v-if="comment.can?.delete && !isMarkedForDeletion" @submit.prevent="$emit('markForDeletion', comment.id)" class="flex justify-content items-center">
+                    <button class="font-mono text-red-700 text-xs">
+                        <TrashIcon class="h-4 w-4" />
+                    </button>
                 </form>
+
+                <div v-if="isMarkedForDeletion" class="flex gap-2">
+                    <button class="font-mono text-red-700 text-xs" @click.prevent="$emit('confirmDelete', comment.id)">
+                        <CheckIcon class="h-4 w-4" />
+                    </button>
+                    <button class="font-mono text-gray-600 text-xs" @click.prevent="$emit('cancelDelete', comment.id)">
+                        <XMarkIcon class="h-4 w-4" />
+                    </button>
+                </div>
             </div>
         </div>
     </div>
