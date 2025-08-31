@@ -30,7 +30,7 @@ class CommentController extends Controller
             'user_id' => Auth::user()->id,
         ]);
 
-        return to_route('posts.show', $post)->banner('Comment added');
+        return to_route('posts.show', $post);
     }
 
     /**
@@ -42,7 +42,7 @@ class CommentController extends Controller
 
         $comment->update($data);
 
-        return to_route('posts.show', ['post' => $comment->post_id, 'page' => $request->query('page')])->banner('Comment updated');
+        return to_route('posts.show', ['post' => $comment->post_id, 'page' => $request->query('page')]);
     }
 
     /**
@@ -52,6 +52,6 @@ class CommentController extends Controller
     {
         $comment->delete();
 
-        return to_route('posts.show', [ 'post' => $comment->post_id, 'page' => $request->query('page'), ])->banner('Comment deleted');
+        return to_route('posts.show', [ 'post' => $comment->post_id, 'page' => $request->query('page'), ]);
     }
 }
