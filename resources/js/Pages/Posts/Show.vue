@@ -25,10 +25,7 @@
                         <Comment
                             :comment="comment"
                             :isBeingEdited="commentBeingEdited?.comment?.id === comment.id"
-                            :isMarkedForDeletion="commentsToDelete.includes(comment.id)"
-                            @markForDeletion="markForDeletion"
-                            @confirmDelete="confirmDeletion"
-                            @cancelDelete="cancelDeletion"
+                            @delete="deleteComment"
                             @edit="editComment"
                             @cancelEdit="cancelEdit"
                             @saveEdit="saveEdit"
@@ -54,7 +51,7 @@ import TextArea from '@/Components/TextArea.vue';
 import { formatDate } from '@/Components/Utilities/date';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { router, useForm } from '@inertiajs/vue3';
-import { ref, computed, nextTick } from 'vue';
+import { ref, computed } from 'vue';
 
 const props = defineProps(['post', 'comments']);
 
@@ -82,26 +79,10 @@ const addComment = () => {
     );
 };
 
-const commentsToDelete = ref([]);
-
-const confirmDeletion = (commentId) =>
+const deleteComment = (commentId) =>
     router.delete(route('comments.destroy', { comment: commentId, page: props.comments.meta.current_page }), {
         preserveScroll: true,
-        onSuccess: () => {
-            commentsToDelete.value = commentsToDelete.value.filter(id => id !== commentId);
-        },
     });
-
-const markForDeletion = async (commentId) => {
-    if (!commentsToDelete.value.includes(commentId)) {
-        commentsToDelete.value.push(commentId);
-        await nextTick();
-    }
-};
-
-const cancelDeletion = (commentId) => {
-    commentsToDelete.value = commentsToDelete.value.filter(id => id !== commentId);
-};
 
 // Use a single ref for editing state
 const commentBeingEdited = ref(null);
