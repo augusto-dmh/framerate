@@ -7,20 +7,15 @@ const show = ref(true);
 const style = ref('success');
 const message = ref('');
 
-const timeout = ref(null);
-
 watchEffect(async () => {
     style.value = page.props.jetstream.flash?.bannerStyle || 'success';
     message.value = page.props.jetstream.flash?.banner || '';
     show.value = true;
-
-    clearTimeout(timeout.value);
-    timeout.value = setTimeout(() => show.value = false, 5000);
 });
 </script>
 
 <template>
-    <div class="sticky top-0 z-10">
+    <div>
         <div v-if="show && message" :class="{ 'bg-indigo-500': style == 'success', 'bg-red-700': style == 'danger' }">
             <div class="max-w-screen-xl mx-auto py-2 px-3 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between flex-wrap">
