@@ -9,7 +9,7 @@ import { router, usePage } from '@inertiajs/vue3';
 
     const preventWidow = (text) => text.replace(/\s(?=[^\s]*$)/, '&nbsp;');
 
-    const emit = defineEmits(['delete']);
+    const emit = defineEmits(['edit', 'delete']);
 </script>
 
 <template>
@@ -22,7 +22,10 @@ import { router, usePage } from '@inertiajs/vue3';
             <span class="first-letter:uppercase block pt-1 text-xs text-gray-600">
                 By {{ comment.user.name }} {{ formattedDate(comment.created_at) }} ago
             </span>
-            <div class="mt-1 flex justify-end">
+            <div class="mt-1 flex justify-end space-x-3">
+                <form v-if="comment.can?.update" @submit.prevent="$emit('edit', comment.id)">
+                    <button class="font-mono text-xs">Edit</button>
+                </form>
                 <form v-if="comment.can?.delete" @submit.prevent="$emit('delete', comment.id)">
                     <button class="font-mono text-red-700 text-xs">Delete</button>
                 </form>
