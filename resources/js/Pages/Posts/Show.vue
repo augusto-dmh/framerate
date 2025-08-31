@@ -21,20 +21,12 @@
                 </form>
 
                 <ul class="divide-y">
-                    <li v-for="comment in comments" :key="comment.id" class="flex gap-4 px-2 py-4">
-                        <Comment
-                            :comment="comment"
-                            :isBeingEdited="commentBeingEdited?.comment?.id === comment.id"
-                            @delete="deleteComment"
-                            @edit="editComment"
-                            @cancelEdit="cancelEdit"
-                            @saveEdit="saveEdit"
-                            @updatePreview="updateCommentPreview"
-                        />
+                    <li v-for="comment in comments.data" :key="comment.id" class="flex gap-4 px-2 py-4">
+                        <Comment @delete="deleteComment" :comment="comment" />
                     </li>
                 </ul>
 
-                <Pagination :meta="props.comments.meta" :preserveScroll="true" :only="['comments']" />
+                <Pagination :meta="comments.meta" :preserveScroll="true" :only="['comments']" />
             </div>
         </Container>
     </AppLayout>
@@ -51,17 +43,9 @@ import TextArea from '@/Components/TextArea.vue';
 import { formatDate } from '@/Components/Utilities/date';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { router, useForm } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 
 const props = defineProps(['post', 'comments']);
-
-const comments = computed(() =>
-    props.comments.data.map(comment =>
-        commentBeingEdited.value?.comment?.id === comment.id
-            ? { ...comment, body: commentBeingEdited.value.previewBody }
-            : comment
-    )
-);
 
 const postDateFormatted = computed(() => formatDate(props.post.created_at));
 
@@ -83,40 +67,4 @@ const deleteComment = (commentId) =>
     router.delete(route('comments.destroy', { comment: commentId, page: props.comments.meta.current_page }), {
         preserveScroll: true,
     });
-
-// Use a single ref for editing state
-const commentBeingEdited = ref(null);
-
-// Called when Comment emits 'edit'
-const editComment = (comment) => {
-    commentBeingEdited.value = {
-        comment,
-        previewBody: comment.body,
-    };
-};
-
-const cancelEdit = () => {
-    commentBeingEdited.value = null;
-};
-
-const updateCommentPreview = (value) => {
-    if (commentBeingEdited.value) {
-        commentBeingEdited.value.previewBody = value;
-    }
-};
-
-const saveEdit = () => {
-    if (!commentBeingEdited.value?.comment?.id) return;
-
-    router.put(
-        route('comments.update', commentBeingEdited.value.comment.id),
-        { body: commentBeingEdited.value.previewBody, page: props.comments.meta.current_page },
-        {
-            preserveScroll: true,
-            onSuccess: () => {
-                commentBeingEdited.value = null;
-            },
-        }
-    );
-};
 </script>
