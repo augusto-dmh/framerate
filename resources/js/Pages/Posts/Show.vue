@@ -83,6 +83,7 @@ const updateComment = () => {
         comment: commentIdBeingEdited.value,
         page: props.comments.meta.current_page,
         onSuccess: cancelEditComment,
+        preserveScroll: true,
     });
 }
 
