@@ -8,6 +8,7 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import Container from '@/Components/Container.vue';
+import ConfirmationModalWrapper from '@/Components/ConfirmationModalWrapper.vue';
 
 defineProps({
     title: String,
@@ -305,5 +306,7 @@ const logout = () => {
                 <slot />
             </main>
         </div>
+
+        <ConfirmationModalWrapper />
     </div>
 </template>
