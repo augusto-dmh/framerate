@@ -40,6 +40,7 @@ import Pagination from '@/Components/Pagination.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextArea from '@/Components/TextArea.vue';
+import { useConfirm } from '@/Components/Utilities/Composables/useConfirm';
 import { formatDate } from '@/Components/Utilities/date';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { router, useForm } from '@inertiajs/vue3';
@@ -78,7 +79,14 @@ const addComment = () => {
     );
 };
 
-const updateComment = () => {
+const { confirmation } = useConfirm();
+
+const updateComment = async () => {
+    if (! await confirmation('Are you sure you want to update this comment?')) {
+        setTimeout(() => commentTextAreaRef.value?.$el.focus(), 250);
+        return;
+    }
+
     commentForm.put(route('comments.update', commentIdBeingEdited.value), {
         comment: commentIdBeingEdited.value,
         page: props.comments.meta.current_page,
@@ -87,8 +95,13 @@ const updateComment = () => {
     });
 }
 
-const deleteComment = (commentId) =>
+const deleteComment = async (commentId) => {
+    if (! await confirmation('Are you sure you want to delete this comment?')) {
+        return;
+    }
+
     router.delete(route('comments.destroy', { comment: commentId, page: props.comments.meta.current_page }), {
         preserveScroll: true,
     });
+}
 </script>
