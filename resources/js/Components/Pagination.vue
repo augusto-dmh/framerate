@@ -6,12 +6,16 @@
       <Link
         v-if="previousUrl"
         :href="previousUrl"
+        :preserve-scroll="preserveScroll"
+        :only="only"
         class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
         >Previous
       </Link>
       <Link
         v-if="nextUrl"
         :href="nextUrl"
+        :preserve-scroll="preserveScroll"
+        :only="only"
         class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
         >Next
       </Link>
@@ -39,10 +43,12 @@
           class="isolate bg-white inline-flex -space-x-px rounded-md shadow-xs"
           aria-label="Pagination"
         >
-            <template v-for="link in meta.links" :key="link.url">
+            <template v-for="(link, i) in meta.links" :key="`${link.url}-${i}`">
                 <Link
                     v-if="link.url"
                     :href="link.url"
+                    :preserve-scroll="preserveScroll"
+                    :only="only"
                     class="relative inline-flex items-c
                     enter first-of-type:rounded-l-md last-of-type:rounded-r-md px-3 py-2 focus:z-20 focus:outline-offset-0"
                     :class="{
@@ -68,7 +74,7 @@
 import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
-const props = defineProps(["meta"]);
+const props = defineProps(["meta", "preserveScroll", "only"]);
 
 const previousUrl = computed(() => props.meta.links[0].url);
 const nextUrl = computed(() => props.meta.links.toReversed()[0].url);

@@ -6,6 +6,7 @@ use App\Models\Post;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Http\Resources\PostResource;
+use App\Http\Resources\CommentResource;
 
 class PostController extends Controller
 {
@@ -45,9 +46,11 @@ class PostController extends Controller
     public function show(Post $post)
     {
         $post->load('user');
+        $comments = $post->comments()->with('user')->orderBy('id', 'desc')->paginate(10);
 
         return Inertia::render('Posts/Show', [
-            'post' => PostResource::make($post),
+            'post' => fn () => PostResource::make($post),
+            'comments' => fn () => CommentResource::collection($comments),
         ]);
     }
 
