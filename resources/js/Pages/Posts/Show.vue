@@ -1,11 +1,12 @@
 <template>
     <AppLayout :title="post.title">
         <Container>
-            <h1 class="text-2xl font-bold mb-4">{{ post.title }}</h1>
-            <p>{{ post.body }}</p>
-            <p>Publicado: {{ postDateFormatted }}</p>
+            <h1 class="text-2xl font-bold">{{ post.title }}</h1>
+            <p class="mb-6 text-sm text-gray-500">{{ postDateFormatted }} by {{ post.user.name }}</p>
 
-            <div class="mt-12 mt-4">
+            <p class="break-words whitespace-pre-line">{{ post.body }}</p>
+
+            <div class="mt-12">
                 <h2 class="text-xl font-semibold">Comments</h2>
 
                 <form v-if="$page.props.auth.user" @submit.prevent="() => commentIdBeingEdited ? updateComment() : addComment()">
