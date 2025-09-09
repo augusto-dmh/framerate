@@ -7,9 +7,16 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Http\Resources\PostResource;
 use App\Http\Resources\CommentResource;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class PostController extends Controller
 {
+    use AuthorizesRequests;
+
+    public function __construct() {
+        $this->authorizeResource(Post::class);
+    }
+
     /**
      * Display a listing of the resource.
      */
