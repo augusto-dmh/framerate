@@ -11,7 +11,7 @@ use App\Models\User;
 it('can show a post', function () {
     $post = Post::factory()->create();
 
-    get(route('posts.show', $post))
+    get($post->showRoute())
         ->assertComponent('Posts/Show');
 });
 
@@ -22,7 +22,7 @@ it('passes a post to the view', function () {
 
     $post->load('user');
 
-    get(route('posts.show', $post))
+    get($post->showRoute())
         ->assertHasResource('post', PostResource::make($post));
 });
 
@@ -32,7 +32,14 @@ it('passes comments to the view', function () {
 
     $comments->load('user');
 
-    get(route('posts.show', $post))
+    get($post->showRoute())
         ->assertOk()
         ->assertHasPaginatedResource('comments', CommentResource::collection($comments));
+});
+
+it('will redirect if the slug is incorrect', function () {
+    $post = Post::factory()->create(['title' => 'Some Title']);
+
+    get(route('posts.show', ['post' => $post, 'slug' => 'some-tit;r', 'some-arg' => 1]))
+        ->assertRedirect($post->showRoute(['some-arg' => 1]));
 });
