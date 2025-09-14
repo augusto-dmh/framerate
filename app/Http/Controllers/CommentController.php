@@ -43,7 +43,7 @@ class CommentController extends Controller
 
         $comment->update($data);
 
-        return redirect($comment->post->showRoute(['post' => $comment->post_id]))
+        return redirect($comment->post->showRoute(['page' => $request->query('page')]))
             ->banner('Comment updated.');
     }
 
