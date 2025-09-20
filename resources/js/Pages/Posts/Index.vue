@@ -20,7 +20,7 @@ defineProps(['posts']);
     <Container>
         <ul class="divide-y">
             <li v-for="post in posts.data" class="px-2 py-4">
-                <Link :href="route('posts.show', post.id)" class="group  block">
+                <Link :href="post.routes.show" class="group block">
                         <span class="font-bold text-lg group-hover:text-blue-500 group-focus:text-blue-500">{{ post.title }}</span>
                         <span class="text-sm text-gray-600 block mt-1 group-hover:text-blue-500 group-focus:text-blue-500">{{ formattedDate(post.created_at) }} ago by {{ post.user?.name }}</span>
                 </Link>

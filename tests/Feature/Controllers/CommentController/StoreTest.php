@@ -38,7 +38,7 @@ it('redirects to the post show page', function () {
         'body' => 'This is a comment',
     ]);
 
-    $request->assertRedirect(route('posts.show', $post));
+    $request->assertRedirect($post->showRoute());
 });
 
 it('requires a valid body', function ($value) {

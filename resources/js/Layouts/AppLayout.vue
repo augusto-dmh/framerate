@@ -27,6 +27,13 @@ const menu = [
         route: 'posts.index',
         when: () => true,
     },
+    {
+        name: "Create a Post",
+        url: route('posts.create'),
+        route: 'posts.create',
+        when: () => usePage().props.permissions.create_posts,
+    },
+
 ];
 
 const showingNavigationDropdown = ref(false);
