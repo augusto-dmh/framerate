@@ -4,7 +4,8 @@
             <h1 class="text-2xl font-bold">{{ post.title }}</h1>
             <p class="mb-6 text-sm text-gray-500">{{ postDateFormatted }} by {{ post.user.name }}</p>
 
-            <p class="break-words whitespace-pre-line">{{ post.body }}</p>
+            <article class="mt-6 prose prose-sm max-w-none" v-html="post.html">
+            </article>
 
             <div class="mt-12">
                 <h2 class="text-xl font-semibold">Comments</h2>

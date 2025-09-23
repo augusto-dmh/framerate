@@ -27,6 +27,11 @@ class Post extends Model
         return Attribute::set(fn ($value) => Str::title($value));
     }
 
+    protected static function booted()
+    {
+        static::saving(fn (self $post) => $post->fill(['html' => str($post->body)->markdown()]));
+    }
+
     public function showRoute(array $parameters = []) {
         return route('posts.show', [$this, Str::slug($this->title), ...$parameters]);
     }

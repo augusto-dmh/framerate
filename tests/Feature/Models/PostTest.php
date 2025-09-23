@@ -25,3 +25,11 @@ it('can generate additional query parameters on the show route', function () {
             'another-arg' => 2,
         ]));
 });
+
+it('generates the html', function () {
+    $post = Post::factory()->make(['body' => '## Hello world']);
+
+    $post->save();
+
+    expect($post->html)->toEqual(str(self::body)->markdown());
+});
