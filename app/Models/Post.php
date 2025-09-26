@@ -9,11 +9,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
+use App\Models\Concerns\ConvertsMarkdownToHtml;
 
 class Post extends Model
 {
     /** @use HasFactory<\Database\Factories\PostFactory> */
     use HasFactory;
+    use ConvertsMarkdownToHtml;
 
     public function user(): BelongsTo {
         return $this->belongsTo(User::class);
@@ -25,11 +27,6 @@ class Post extends Model
 
     public function title(): Attribute {
         return Attribute::set(fn ($value) => Str::title($value));
-    }
-
-    protected static function booted()
-    {
-        static::saving(fn (self $post) => $post->fill(['html' => str($post->body)->markdown()]));
     }
 
     public function showRoute(array $parameters = []) {
