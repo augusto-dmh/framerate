@@ -18,7 +18,7 @@ import { router, usePage } from '@inertiajs/vue3';
             <img :src="comment.user.profile_photo_url" :alt="comment.user.name" class="h-10 w-10 rounded-full" />
         </div>
         <div class="flex-1 flex flex-col">
-            <p class="mt-1 break-all" v-html="preventWidow(comment.body)"></p>
+            <div class="mt-1 prose prose-sm max-w-none" v-html="comment.html"></div>
             <span class="first-letter:uppercase block pt-1 text-xs text-gray-600">
                 By {{ comment.user.name }} {{ formattedDate(comment.created_at) }} ago
             </span>
