@@ -31,5 +31,5 @@ it('generates the html', function () {
 
     $post->save();
 
-    expect($post->html)->toEqual(str(self::body)->markdown());
+    expect($post->html)->toEqual(str($post->body)->markdown());
 });
