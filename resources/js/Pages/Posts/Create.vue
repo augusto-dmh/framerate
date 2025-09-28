@@ -12,7 +12,18 @@
 
                 <div class="mt-3">
                     <InputLabel for="body" class="sr-only">Body</InputLabel>
-                    <MarkdownEditor v-model="form.body" placeholder="Speak your mind Spock..." />
+                    <MarkdownEditor v-model="form.body" placeholder="Speak your mind Spock...">
+                        <template #toolbar="{ editor }">
+                            <li v-if="! isInProduction()">
+                                <button @click="autofill"
+                                    type="button"
+                                    class="px-3 py-2"
+                                    title="Autofill">
+                                <i class="ri-article-line"></i>
+                                </button>
+                            </li>
+                        </template>
+                    </MarkdownEditor>
                     <InputError :message="form.errors.body" class="mt-1" />
                 </div>
 
@@ -34,6 +45,7 @@ import TextArea from '@/Components/TextArea.vue';
 import TextInput from '@/Components/TextInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { useForm } from '@inertiajs/vue3';
+import { isInProduction } from '@/Components/Utilities/environment';
 
 const form = useForm({
     'title': '',
@@ -41,5 +53,16 @@ const form = useForm({
 });
 
 const createPost = () => form.post(route('posts.store'));
+
+const autofill = async () => {
+    if (isInProduction()) {
+        return;
+    }
+
+    const response = await axios.get('/local/post-content');
+
+    form.title = response.data.title;
+    form.body = response.data.body;
+};
 
 </script>
