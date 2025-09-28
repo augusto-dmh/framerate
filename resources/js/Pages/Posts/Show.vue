@@ -4,7 +4,8 @@
             <h1 class="text-2xl font-bold">{{ post.title }}</h1>
             <p class="mb-6 text-sm text-gray-500">{{ postDateFormatted }} by {{ post.user.name }}</p>
 
-            <p class="break-words whitespace-pre-line">{{ post.body }}</p>
+            <article class="mt-6 prose prose-sm max-w-none" v-html="post.html">
+            </article>
 
             <div class="mt-12">
                 <h2 class="text-xl font-semibold">Comments</h2>
@@ -12,7 +13,7 @@
                 <form v-if="$page.props.auth.user" @submit.prevent="() => commentIdBeingEdited ? updateComment() : addComment()">
                     <div>
                         <InputLabel for="body" class="sr-only">Comment</InputLabel>
-                        <TextArea ref="commentTextAreaRef" id="body" v-model="commentForm.body" />
+                        <MarkdownEditor ref="commentTextAreaRef" id="body" v-model="commentForm.body" editorClass="min-h-[160px]" />
                         <InputError :message="commentForm.errors.body" />
                     </div>
 
@@ -37,10 +38,10 @@ import Comment from '@/Components/Comment.vue';
 import Container from '@/Components/Container.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
+import MarkdownEditor from '@/Components/MarkdownEditor.vue';
 import Pagination from '@/Components/Pagination.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-import TextArea from '@/Components/TextArea.vue';
 import { useConfirm } from '@/Components/Utilities/Composables/useConfirm';
 import { formatDate } from '@/Components/Utilities/date';
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -84,7 +85,7 @@ const { confirmation } = useConfirm();
 
 const updateComment = async () => {
     if (! await confirmation('Are you sure you want to update this comment?')) {
-        setTimeout(() => commentTextAreaRef.value?.$el.focus(), 250);
+        setTimeout(() => commentTextAreaRef.value?.focus(), 250);
         return;
     }
 
