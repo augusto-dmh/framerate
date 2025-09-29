@@ -24,7 +24,7 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::query()
-            ->with('user')
+            ->with(['user', 'topic'])
             ->latest('id');
 
         return Inertia::render('Posts/Index', [
