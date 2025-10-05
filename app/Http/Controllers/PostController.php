@@ -7,8 +7,11 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Http\Resources\PostResource;
 use App\Http\Resources\CommentResource;
+use App\Http\Resources\TopicResource;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Str;
+use App\Models\Topic;
+use Illuminate\Database\Eloquent\Builder;
 
 class PostController extends Controller
 {
@@ -21,14 +24,17 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(?Topic $topic = null)
     {
         $posts = Post::query()
             ->with(['user', 'topic'])
-            ->latest('id');
+            ->when($topic, fn (Builder $q) => $q->whereBelongsTo($topic))
+            ->latest('id')
+            ->paginate();
 
         return Inertia::render('Posts/Index', [
-            'posts' => PostResource::collection($posts->paginate()),
+            'posts' => PostResource::collection($posts),
+            'selectedTopic' => fn () => $topic ? TopicResource::make($topic) : null,
         ]);
     }
 
