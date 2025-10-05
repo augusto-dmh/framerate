@@ -1,7 +1,7 @@
 <template>
     <AppLayout :title="post.title">
         <Container>
-            <h1 class="text-2xl font-bold">{{ post.title }}</h1>
+            <PageHeading>{{ post.title }}</PageHeading>
             <p class="mb-6 text-sm text-gray-500">{{ postDateFormatted }} by {{ post.user.name }}</p>
 
             <article class="mt-6 prose prose-sm max-w-none" v-html="post.html">
