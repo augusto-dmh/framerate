@@ -1,7 +1,8 @@
 <template>
     <AppLayout :title="post.title">
         <Container>
-            <h1 class="text-2xl font-bold">{{ post.title }}</h1>
+            <Pill :href="route('posts.index', {topic: post.topic.slug})">{{ post.topic.name }}</Pill>
+            <PageHeading class="mt-2">{{ post.title }}</PageHeading>
             <p class="mb-6 text-sm text-gray-500">{{ postDateFormatted }} by {{ post.user.name }}</p>
 
             <article class="mt-6 prose prose-sm max-w-none" v-html="post.html">
@@ -39,7 +40,9 @@ import Container from '@/Components/Container.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import MarkdownEditor from '@/Components/MarkdownEditor.vue';
+import PageHeading from '@/Components/PageHeading.vue';
 import Pagination from '@/Components/Pagination.vue';
+import Pill from '@/Components/Pill.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import { useConfirm } from '@/Components/Utilities/Composables/useConfirm';

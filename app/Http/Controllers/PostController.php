@@ -7,8 +7,11 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Http\Resources\PostResource;
 use App\Http\Resources\CommentResource;
+use App\Http\Resources\TopicResource;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Str;
+use App\Models\Topic;
+use Illuminate\Database\Eloquent\Builder;
 
 class PostController extends Controller
 {
@@ -21,14 +24,18 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(?Topic $topic = null)
     {
         $posts = Post::query()
-            ->with('user')
-            ->latest('id');
+            ->with(['user', 'topic'])
+            ->when($topic, fn (Builder $q) => $q->whereBelongsTo($topic))
+            ->latest('id')
+            ->paginate();
 
         return Inertia::render('Posts/Index', [
-            'posts' => PostResource::collection($posts->paginate()),
+            'posts' => PostResource::collection($posts),
+            'topics' => fn () => TopicResource::collection(Topic::all()),
+            'selectedTopic' => fn () => $topic ? TopicResource::make($topic) : null,
         ]);
     }
 
@@ -37,7 +44,9 @@ class PostController extends Controller
      */
     public function create()
     {
-        return inertia('Posts/Create');
+        return inertia('Posts/Create', [
+            'topics' => fn () => TopicResource::collection(Topic::all()),
+        ]);
     }
 
     /**
@@ -47,6 +56,7 @@ class PostController extends Controller
     {
         $data = $request->validate([
             'title' => ['required', 'string', 'max:120'],
+            'topic_id' => ['required', 'exists:topics,id'],
             'body' => ['required', 'string', 'max:65535'],
         ]);
 
@@ -67,7 +77,7 @@ class PostController extends Controller
             return redirect($post->showRoute($request->query()), status: 301);
         }
 
-        $post->load('user');
+        $post->load('user', 'topic');
         $comments = $post->comments()->with('user')->orderBy('id', 'desc')->paginate(10);
 
         return Inertia::render('Posts/Show', [

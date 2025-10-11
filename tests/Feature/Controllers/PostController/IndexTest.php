@@ -4,6 +4,8 @@ use Inertia\Testing\AssertableInertia;
 use function Pest\Laravel\get;
 use App\Models\Post;
 use App\Http\Resources\PostResource;
+use App\Models\Topic;
+use App\Http\Resources\TopicResource;
 
 it('should return the correct component', function () {
     $this->withoutExceptionHandling();
@@ -15,9 +17,34 @@ it('should return the correct component', function () {
 it('passes posts to the view', function () {
     $posts = Post::factory(3)
         ->create()
-        ->load('user')
+        ->load(['user', 'topic'])
         ->reverse();
 
     get(route('posts.index'))
         ->assertHasPaginatedResource('posts', PostResource::collection($posts));
+});
+
+it('can filter to a topic', function () {
+    $general = Topic::factory()->create();
+    $posts = Post::factory(2)->for($general)->create();
+    $otherPosts = Post::factory(3)->create();
+
+    $posts->load(['user', 'topic']);
+
+    get(route('posts.index', ['topic' => $general]))
+        ->assertHasPaginatedResource('posts', PostResource::collection($posts->reverse()));
+});
+
+it('passes the selected topic to the view', function () {
+    $topic = Topic::factory()->create();
+
+    get(route('posts.index', ['topic' => $topic]))
+        ->assertHasResource('selectedTopic', TopicResource::make($topic));
+});
+
+it('passes topics to the view', function () {
+    $topics = Topic::factory(3)->create();
+
+    get(route('posts.index'))
+        ->assertHasResource('topics', TopicResource::collection($topics));
 });
