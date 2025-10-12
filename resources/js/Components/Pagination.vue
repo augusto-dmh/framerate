@@ -74,8 +74,22 @@
 import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
-const props = defineProps(["meta", "preserveScroll", "only"]);
+const props = defineProps({
+    meta: {
+        type: Object,
+        required: true,
+    },
+    preserveScroll: {
+        type: Boolean,
+        default: false,
+    },
+    only: {
+        type: Array,
+        default: () => [],
+    },
+});
 
+const only = computed(() => props.only.length === 0 ? [] : [...props.only, 'jetstream']);
 const previousUrl = computed(() => props.meta.links[0].url);
 const nextUrl = computed(() => props.meta.links.toReversed()[0].url);
 </script>
