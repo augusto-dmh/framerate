@@ -1,4 +1,8 @@
 <template>
+    <Head>
+        <link rel="canonical" :href="post.routes.show" />
+    </Head>
+
     <AppLayout :title="post.title">
         <Container>
             <Pill :href="route('posts.index', {topic: post.topic.slug})">{{ post.topic.name }}</Pill>
@@ -14,7 +18,7 @@
                 <form v-if="$page.props.auth.user" @submit.prevent="() => commentIdBeingEdited ? updateComment() : addComment()">
                     <div>
                         <InputLabel for="body" class="sr-only">Comment</InputLabel>
-                        <MarkdownEditor ref="commentTextAreaRef" id="body" v-model="commentForm.body" editorClass="min-h-[160px]" />
+                        <MarkdownEditor ref="commentTextAreaRef" id="body" v-model="commentForm.body" editorClass="!min-h-[160px]" />
                         <InputError :message="commentForm.errors.body" />
                     </div>
 
@@ -48,7 +52,7 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import { useConfirm } from '@/Components/Utilities/Composables/useConfirm';
 import { formatDate } from '@/Components/Utilities/date';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { router, useForm } from '@inertiajs/vue3';
+import { router, useForm, Head } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 
 const props = defineProps(['post', 'comments']);
@@ -105,7 +109,12 @@ const deleteComment = async (commentId) => {
         return;
     }
 
-    router.delete(route('comments.destroy', { comment: commentId, page: props.comments.meta.current_page }), {
+    router.delete(route('comments.destroy', {
+        comment: commentId,
+        page: props.comments.data.length > 1 ?
+            props.comments.meta.current_page :
+            Math.max(props.comments.meta.current_page - 1, 1),
+    }), {
         preserveScroll: true,
     });
 }
