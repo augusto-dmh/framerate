@@ -5,6 +5,9 @@ namespace App\Providers;
 use App\Http\Resources\PostResource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use App\Models\Post;
+use App\Models\Comment;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,5 +29,10 @@ class AppServiceProvider extends ServiceProvider
         Model::preventLazyLoading();
 
         Model::unguard();
+
+        Relation::enforceMorphMap([
+            'post' => Post::class,
+            'comment' => Comment::class,
+        ]);
     }
 }
