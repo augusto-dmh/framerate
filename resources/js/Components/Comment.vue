@@ -5,8 +5,6 @@ import { router, usePage } from '@inertiajs/vue3';
 
     const props = defineProps(['comment']);
 
-    const formattedDate = (date) => formatDate(date);
-
     const preventWidow = (text) => text.replace(/\s(?=[^\s]*$)/, '&nbsp;');
 
     const emit = defineEmits(['edit', 'delete']);
@@ -20,7 +18,7 @@ import { router, usePage } from '@inertiajs/vue3';
         <div class="flex-1 flex flex-col">
             <div class="mt-1 prose prose-sm max-w-none" v-html="comment.html"></div>
             <span class="first-letter:uppercase block pt-1 text-xs text-gray-600">
-                By {{ comment.user.name }} {{ formattedDate(comment.created_at) }} ago
+                By {{ comment.user.name }} {{ formatDate(comment.created_at) }}
             </span>
             <div class="mt-1 flex justify-end space-x-3">
                 <form v-if="comment.can?.update" @submit.prevent="$emit('edit', comment.id)">
