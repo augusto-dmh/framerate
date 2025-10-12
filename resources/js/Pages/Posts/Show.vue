@@ -48,7 +48,7 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import { useConfirm } from '@/Components/Utilities/Composables/useConfirm';
 import { formatDate } from '@/Components/Utilities/date';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { router, useForm } from '@inertiajs/vue3';
+import { router, useForm, Head } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 
 const props = defineProps(['post', 'comments']);
@@ -105,7 +105,12 @@ const deleteComment = async (commentId) => {
         return;
     }
 
-    router.delete(route('comments.destroy', { comment: commentId, page: props.comments.meta.current_page }), {
+    router.delete(route('comments.destroy', {
+        comment: commentId,
+        page: props.comments.data.length > 1 ?
+            props.comments.meta.current_page :
+            Math.max(props.comments.meta.current_page - 1, 1),
+    }), {
         preserveScroll: true,
     });
 }
