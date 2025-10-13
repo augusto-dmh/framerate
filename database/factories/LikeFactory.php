@@ -27,7 +27,9 @@ class LikeFactory extends Factory
 
     protected function likeableType(array $values) {
         $type = $values['likeable_id'];
-        $modelName = $type->modelName();
+        $modelName = $type instanceof Factory
+            ? $type->modelName()
+            : $type::class;
 
         return (new $modelName)->getMorphClass();
     }
