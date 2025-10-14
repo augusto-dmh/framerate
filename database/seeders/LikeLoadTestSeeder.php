@@ -27,5 +27,7 @@ class LikeLoadTestSeeder extends Seeder
             $progress->advance(100);
         });
         $progress->finish();
+
+        $post->increment('likes_count', 500_000);
     }
 }
