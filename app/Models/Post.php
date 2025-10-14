@@ -18,6 +18,8 @@ class Post extends Model
     use HasFactory;
     use ConvertsMarkdownToHtml;
 
+    protected $withCount = ['likes'];
+
     public function user(): BelongsTo {
         return $this->belongsTo(User::class);
     }
