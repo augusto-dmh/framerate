@@ -11,6 +11,17 @@
 
             <div class="mt-4">
                 <span class="text-pink-500 font-bold">{{ post.likes_count }} likes</span>
+
+                <div v-if="$page.props.auth.user" class="mt-2">
+                    <Link v-if="post.can.like" :href="route('likes.store', ['post', post.id])" method="post" class="inline-block bg-indigo-600 hover:bg-pink-500 transition-colors text-white py-1.5 px-3 rounded-full">
+                        <HandThumbUpIcon class="size-4 inline-block mr-1" />
+                        Like Post
+                    </Link>
+                    <Link v-else :href="route('likes.destroy', ['post', post.id])" method="delete" class="inline-block bg-indigo-600 hover:bg-pink-500 transition-colors text-white py-1.5 px-3 rounded-full">
+                        <HandThumbDownIcon class="size-4 inline-block mr-1" />
+                        Unlike Post
+                    </Link>
+                </div>
             </div>
 
             <article class="mt-6 prose prose-sm max-w-none" v-html="post.html">
@@ -53,10 +64,11 @@ import Pagination from '@/Components/Pagination.vue';
 import Pill from '@/Components/Pill.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import { HandThumbUpIcon, HandThumbDownIcon } from '@heroicons/vue/20/solid/index.js';
 import { useConfirm } from '@/Components/Utilities/Composables/useConfirm';
 import { formatDate } from '@/Components/Utilities/date';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { router, useForm, Head } from '@inertiajs/vue3';
+import { router, useForm, Head, Link } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 
 const props = defineProps(['post', 'comments']);
