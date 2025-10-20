@@ -81,8 +81,14 @@ class PostController extends Controller
         $comments = $post->comments()->with('user')->orderBy('id', 'desc')->paginate(10);
 
         return Inertia::render('Posts/Show', [
-            'post' => fn () => PostResource::make($post),
-            'comments' => fn () => CommentResource::collection($comments),
+            'post' => fn () => PostResource::make($post)->withLikePermission(),
+            'comments' => function () use ($post, $comments) {
+                $commentResourceCollection = CommentResource::collection($comments);
+
+                $commentResourceCollection->collection->transform(fn ($resource) => $resource->withLikePermission());
+
+                return $commentResourceCollection;
+            },
         ]);
     }
 
