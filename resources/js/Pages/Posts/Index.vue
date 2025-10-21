@@ -4,14 +4,22 @@ import PageHeading from '@/Components/PageHeading.vue';
 import Pagination from '@/Components/Pagination.vue';
 import Pill from '@/Components/Pill.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
 import { formatDate } from '@/Components/Utilities/date';
+import TextInput from '@/Components/TextInput.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
 
 defineOptions({
     layout: AppLayout,
 });
 
-defineProps(['posts', 'topics', 'selectedTopic']);
+const props = defineProps(['posts', 'topics', 'selectedTopic', 'query']);
+
+const searchForm = useForm({
+    query: props.query,
+});
+
+const search = () => searchForm.get(route('posts.index'));
 </script>
 
 <template>
@@ -26,6 +34,17 @@ defineProps(['posts', 'topics', 'selectedTopic']);
                 </Pill>
             </li>
         </menu>
+
+        <form @submit.prevent="search" class="mt-4">
+            <div>
+                <InputLabel for="query">Search</InputLabel>
+                <div class="flex mt-1 space-x-2">
+                    <TextInput v-model="searchForm.query" class="w-full" id="query" />
+                    <SecondaryButton type="submit">Search</SecondaryButton>
+                </div>
+            </div>
+        </form>
+
         <ul class="divide-y mt-4">
             <li v-for="post in posts.data" class="px-2 py-4 flex justify-between items-baseline flex-col md:flex-row">
                 <Link :href="post.routes.show" class="group block">
