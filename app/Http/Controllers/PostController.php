@@ -12,6 +12,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Str;
 use App\Models\Topic;
 use Illuminate\Database\Eloquent\Builder;
+use Laravel\Scout\Builder as ScoutBuilder;
 
 class PostController extends Controller
 {
@@ -26,20 +27,19 @@ class PostController extends Controller
      */
     public function index(Request $request, ?Topic $topic = null)
     {
-        $posts = Post::query()
-            ->with(['user', 'topic'])
-            ->when($topic, fn (Builder $q) => $q->whereBelongsTo($topic))
-            ->when(
-                $request->query('query'),
-                fn (Builder $q) => $q
-                    ->whereAny(['title', 'body'], 'like', '%' . $request->query('query') . '%'),
-            )
-            ->latest('id')
-            ->paginate()
-            ->withQueryString();
+        if ($request->query('query')) {
+            $posts = Post::search($request->query('query'))
+                ->query(fn (Builder $q) => $q->with(['user', 'topic']))
+                ->when($topic, fn (ScoutBuilder $q) => $q->where('topic_id', $topic->id));
+        } else {
+            $posts = Post::query()
+                ->with(['user', 'topic'])
+                ->when($topic, fn (Builder $q) => $q->whereBelongsTo($topic))
+                ->latest('id');
+        }
 
         return Inertia::render('Posts/Index', [
-            'posts' => PostResource::collection($posts),
+            'posts' => PostResource::collection($posts->paginate()->withQueryString()),
             'topics' => fn () => TopicResource::collection(Topic::all()),
             'selectedTopic' => fn () => $topic ? TopicResource::make($topic) : null,
             'query' => $request->query('query'),
